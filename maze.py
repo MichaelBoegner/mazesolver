@@ -19,8 +19,8 @@ class Window:
             self.redraw()
     def close(self):
         self.running = False
-    def draw_line(self, line):
-        line.draw(self.canvas)
+    def draw_line(self, line, fillcolor="black"):
+        line.draw(self.canvas, fillcolor)
 
 class Point:
     def __init__(self, x, y) -> None:
@@ -30,7 +30,7 @@ class Line:
     def __init__(self, point_1, point_2) -> None:
         self.point_1 = point_1
         self.point_2 = point_2
-    def draw(self, canvas, fill_color="black"):
+    def draw(self, canvas, fill_color):
         canvas.create_line(
             self.point_1.x, 
             self.point_1.y, 
@@ -41,8 +41,6 @@ class Line:
         )
         canvas.pack()
     
-
-
 class Cell:
     def __init__(self, window):
         self.has_left_wall = False
@@ -73,15 +71,34 @@ class Cell:
             line = Line(Point(x1, y2), Point(x2, y2))
             self._window.draw_line(line)
             
+    def draw_move(self, to_cell, undo=False):
+        if undo: 
+            fillcolor = "red"
+        else:
+            fillcolor = "black"
+        line = Line(Point(self._x2*.75,self._y2*.75), Point(to_cell._x2*.75, to_cell._y2*.85))
+        self._window.draw_line(line, fillcolor)
+
+
 
 def main():
     window = Window(800, 800)
-    cell = Cell(window)
-    cell.has_left_wall = True
-    cell.has_top_wall = True
-    cell.has_right_wall = True
-    cell.has_bottom_wall = True
-    cell.draw_line(100,100,200,200)
+    cell1 = Cell(window)
+    cell2 = Cell(window)
+    cell1.has_left_wall = True
+    cell1.has_top_wall = True
+    cell1.has_right_wall = True
+    cell1.has_bottom_wall = True
+    cell1.draw_line(100,100,200,200)
+
+    cell2.has_left_wall = True
+    cell2.has_top_wall = True
+    cell2.has_right_wall = True
+    cell2.has_bottom_wall = True
+    cell2.draw_line(100,200,200,300)
+
+    cell1.draw_move(cell2, True)
+
     window.wait_for_close()
 
 if __name__ == "__main__":
