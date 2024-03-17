@@ -37,16 +37,16 @@ class Line:
             self.point_2.x, 
             self.point_2.y, 
             fill=fill_color, 
-            width=2
+            width=3
         )
         canvas.pack()
     
 class Cell:
     def __init__(self, window):
-        self.has_left_wall = False
-        self.has_right_wall = False
-        self.has_top_wall = False
-        self.has_bottom_wall = False
+        self.has_left_wall = True
+        self.has_right_wall = True
+        self.has_top_wall = True
+        self.has_bottom_wall = True
         self._x1 = None
         self._x2 = None
         self._y1 = None
@@ -79,25 +79,53 @@ class Cell:
         line = Line(Point(self._x2*.75,self._y2*.75), Point(to_cell._x2*.75, to_cell._y2*.85))
         self._window.draw_line(line, fillcolor)
 
+class Maze:
+    def __init__(
+            self,
+            x1,
+            y1,
+            num_rows,
+            num_cols,
+            cell_size_x,
+            cell_size_y,
+            window,) -> None:
+        self.x1 = x1
+        self.y1 = y1
+        self.num_rows = num_rows
+        self.num_cols = num_cols
+        self.cell_size_x = cell_size_x
+        self.cell_size_y = cell_size_y
+        self.window = window
+        self._create_cells()
+
+    def _create_cells(self):
+        self._cells = []
+        x1 = self.x1
+        y1 = self.y1
+        x2 = self.cell_size_x + x1  
+        y2 = self.cell_size_y + y1
+        print("before loop x1,y1,x2,y2 = ",x1,y1,x2,y2)
+        for i in range(self.num_rows):
+            if i > 0:
+                y1 += self.cell_size_y
+                y2 += self.cell_size_y
+            x1 = self.x1
+            x2 = self.cell_size_x + x1  
+            for j in range(self.num_cols):
+                x1 += self.cell_size_x 
+                x2 += self.cell_size_x                   
+                print("x1,y1,x2,y2 = ",x1,y1,x2,y2)
+                cell = Cell(self.window)
+                cell.draw_line(x1, y1, x2, y2)
+                self._cells.append(cell)            
+           
 
 
 def main():
     window = Window(800, 800)
-    cell1 = Cell(window)
-    cell2 = Cell(window)
-    cell1.has_left_wall = True
-    cell1.has_top_wall = True
-    cell1.has_right_wall = True
-    cell1.has_bottom_wall = True
-    cell1.draw_line(100,100,200,200)
+    Maze(10, 10, 5, 5, 100, 100, window)
 
-    cell2.has_left_wall = True
-    cell2.has_top_wall = True
-    cell2.has_right_wall = True
-    cell2.has_bottom_wall = True
-    cell2.draw_line(100,200,200,300)
 
-    cell1.draw_move(cell2, True)
 
     window.wait_for_close()
 
