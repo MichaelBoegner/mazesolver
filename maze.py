@@ -1,4 +1,5 @@
 from tkinter import Tk, BOTH, Canvas
+import time
 
 class Window:
     def __init__(self, width, height) -> None:
@@ -42,7 +43,7 @@ class Line:
         canvas.pack()
     
 class Cell:
-    def __init__(self, window):
+    def __init__(self, window=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -88,38 +89,44 @@ class Maze:
             num_cols,
             cell_size_x,
             cell_size_y,
-            window,) -> None:
+            window=None) -> None:
         self.x1 = x1
         self.y1 = y1
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.cell_size_x = cell_size_x
         self.cell_size_y = cell_size_y
-        self.window = window
+        self.win = window
+        self.cells = []
+
         self._create_cells()
 
     def _create_cells(self):
-        self._cells = []
-        x1 = self.x1
-        y1 = self.y1
-        x2 = self.cell_size_x + x1  
-        y2 = self.cell_size_y + y1
-        print("before loop x1,y1,x2,y2 = ",x1,y1,x2,y2)
-        for i in range(self.num_rows):
-            if i > 0:
-                y1 += self.cell_size_y
-                y2 += self.cell_size_y
-            x1 = self.x1
-            x2 = self.cell_size_x + x1  
-            for j in range(self.num_cols):
-                x1 += self.cell_size_x 
-                x2 += self.cell_size_x                   
-                print("x1,y1,x2,y2 = ",x1,y1,x2,y2)
-                cell = Cell(self.window)
-                cell.draw_line(x1, y1, x2, y2)
-                self._cells.append(cell)            
-           
+        for i in range(self.num_cols):
+            col_cells = []
+            for j in range(self.num_rows):
+                col_cells.append(Cell(self.win))
+            self.cells.append(col_cells)
+        for i in range(self.num_cols):
+            for j in range(self.num_rows):
+                self._draw_cell(i, j)
 
+    def _draw_cell(self, i, j):
+        if self.win is None:
+            return
+        x1 = self.x1 + i * self.cell_size_x
+        y1 = self.y1 + j * self.cell_size_y
+        x2 = x1 + self.cell_size_x
+        y2 = y1 + self.cell_size_y
+        self.cells[i][j].draw_line(x1, y1, x2, y2)
+        self._animate()
+
+    def _animate(self):
+        if self.win is None:
+            return
+        self.win.redraw()
+        time.sleep(0.05)
+        
 
 def main():
     window = Window(800, 800)
