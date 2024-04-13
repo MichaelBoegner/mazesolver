@@ -22,10 +22,6 @@ class Window:
         self.running = False
     def draw_line(self, line, fillcolor="black"):
         line.draw(self.canvas, fillcolor)
-    # def add_label(self, text):
-    #     label = Label(self.canvas, text).place(x = 40,y = 60)  
-    #     label.pack()
-    #     self.redraw()
 
    
 
@@ -121,6 +117,10 @@ class Maze:
             self.cells.append(col_cells)
         for i in range(self.num_cols):
             for j in range(self.num_rows):
+                if (i == self.num_cols-1 and j == self.num_rows-1):
+                    self.cells[i][j].has_bottom_wall = False
+                elif (i == 0 and j == 0):
+                    self.cells[i][j].has_top_wall = False
                 self._draw_cell(i, j)
 
 
@@ -132,10 +132,8 @@ class Maze:
         x2 = x1 + self.cell_size_x
         y2 = y1 + self.cell_size_y
         if (i == self.num_cols-1 and j == self.num_rows-1):
-            self.cells[i][j].has_bottom_wall = False
             self._break_entrance_and_exit(x1, y1, x2, y2, i, j)
         elif (i == 0 and j == 0):
-            self.cells[i][j].has_top_wall = False
             self._break_entrance_and_exit(x1, y1, x2, y2, i, j)
         else:
             self.cells[i][j].draw_line(x1, y1, x2, y2)

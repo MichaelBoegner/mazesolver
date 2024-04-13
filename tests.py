@@ -47,5 +47,14 @@ class Tests(unittest.TestCase):
             10000
         )
 
+    def test_maze_create_entrance_exit(self):
+        m1 = Maze(10, 10, 5, 5, 100, 100)
+        self.assertFalse(
+            m1.cells[0][0].has_top_wall
+        )
+        self.assertFalse(
+            m1.cells[m1.num_cols-1][m1.num_rows-1].has_bottom_wall
+        )
+
 if __name__ == "__main__":
     unittest.main()
