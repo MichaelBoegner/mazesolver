@@ -1,4 +1,4 @@
-from tkinter import Tk, BOTH, Canvas
+from tkinter import Tk, BOTH, Canvas, Label
 import time
 
 class Window:
@@ -22,6 +22,12 @@ class Window:
         self.running = False
     def draw_line(self, line, fillcolor="black"):
         line.draw(self.canvas, fillcolor)
+    # def add_label(self, text):
+    #     label = Label(self.canvas, text).place(x = 40,y = 60)  
+    #     label.pack()
+    #     self.redraw()
+
+   
 
 class Point:
     def __init__(self, x, y) -> None:
@@ -71,6 +77,12 @@ class Cell:
         if self.has_bottom_wall:
             line = Line(Point(x1, y2), Point(x2, y2))
             self._window.draw_line(line)
+        if self.has_top_wall == False:
+            line = Line(Point(x1, y1), Point(x2, y1))
+            self._window.draw_line(line, "white")
+        if self.has_bottom_wall == False:
+            line = Line(Point(x1, y2), Point(x2, y2))
+            self._window.draw_line(line, "white")
             
     def draw_move(self, to_cell, undo=False):
         if undo: 
@@ -86,7 +98,8 @@ class Maze:
             x1,
             y1,
             num_rows,
-            num_cols,            cell_size_x,
+            num_cols,            
+            cell_size_x,
             cell_size_y,
             window=None) -> None:
         self.x1 = x1
@@ -119,9 +132,11 @@ class Maze:
         x2 = x1 + self.cell_size_x
         y2 = y1 + self.cell_size_y
         if (i == self.num_cols-1 and j == self.num_rows-1):
-            self._break_entrance_and_exit(x1, y1, x2, y2)
+            self.cells[i][j].has_bottom_wall = False
+            self._break_entrance_and_exit(x1, y1, x2, y2, i, j)
         elif (i == 0 and j == 0):
-            self._break_entrance_and_exit(x1, y1, x2, y2)
+            self.cells[i][j].has_top_wall = False
+            self._break_entrance_and_exit(x1, y1, x2, y2, i, j)
         else:
             self.cells[i][j].draw_line(x1, y1, x2, y2)
             self._animate()
@@ -132,14 +147,10 @@ class Maze:
         self.win.redraw()
         time.sleep(0.05)
 
-    def _break_entrance_and_exit(self, x1, y1, x2, y2):
-        self.cells[0][0].has_top_wall = False
-        self.cells[0][0].draw_line(x1, y1, x2, y2)
+    def _break_entrance_and_exit(self, x1, y1, x2, y2, i, j):
+        self.cells[i][j].draw_line(x1, y1, x2, y2)
         self._animate()
-        self.cells[self.num_cols-1][self.num_rows-1].has_bottom_wall = False
-        self.cells[self.num_cols-1][self.num_rows-1].draw_line(x1, y1, x2, y2)
-        self._animate()
-        
+              
 
 def main():
     window = Window(800, 800)
