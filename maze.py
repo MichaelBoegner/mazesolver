@@ -1,6 +1,6 @@
 from tkinter import Tk, BOTH, Canvas, Label
 import time
-
+from random import randint
 class Window:
     def __init__(self, width, height) -> None:
         self.width = width
@@ -121,10 +121,14 @@ class Maze:
                     self.cells[i][j].has_bottom_wall = False
                 elif (i == 0 and j == 0):
                     self.cells[i][j].has_top_wall = False
+                # else:
+                #     self.cells[i][j][random_wall] = False
                 self._draw_cell(i, j)
 
 
     def _draw_cell(self, i, j):
+        random_wall = randint(1,4)
+        print(random_wall)
         if self.win is None:
             return
         x1 = self.x1 + i * self.cell_size_x
